@@ -1,0 +1,52 @@
+name: Deploy Frontend - DEV Server
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_and_deploy:
+    name: Build and Deploy to DEV SERVER
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ vars.DEV_SERVER_IP }} >> ~/.ssh/known_hosts
+
+      - name: Rsync to dev server
+        run: |
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/id_ed25519" \
+            dist/ \
+            ${{ vars.DEV_SERVER_USER }}@${{ vars.DEV_SERVER_IP }}:${{ vars.DEPLOY_PATH }}/
+
+      - name: Smoke test
+        run: |
+          ssh -i ~/.ssh/id_ed25519 ${{ vars.DEV_SERVER_USER }}@${{ vars.DEV_SERVER_IP }} << 'EOF'
+            if [ ! -f /var/www/vertex/index.html ]; then
+              echo "❌ index.html not found!"
+              exit 1
+            fi
+            echo "✅ Files deployed."
+            ls -la /var/www/vertex | head -20
+          EOF
