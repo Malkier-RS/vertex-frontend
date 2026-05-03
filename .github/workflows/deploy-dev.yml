@@ -1,4 +1,4 @@
-name: Deploy Frontend - DEV Server
+name: Deploy - DEV Server
 
 on:
   workflow_dispatch:
