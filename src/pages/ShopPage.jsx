@@ -34,6 +34,7 @@ export function ShopPage() {
 
   useEffect(() => {
     api.get('/categories').then((r) => setCategories(r.data));
+    api.get('/brands').then((r) => setBrands(r.data.filter((b) => b.active)));
   }, []);
 
   useEffect(() => {
@@ -43,8 +44,6 @@ export function ShopPage() {
       if (cancelled) return;
       setProducts(r.data.content);
       setMeta({ page: r.data.page, totalPages: r.data.totalPages, totalElements: r.data.totalElements });
-      const b = [...new Set(r.data.content.map((p) => p.brand).filter(Boolean))];
-      setBrands(b);
     }).finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, [filters]);
@@ -69,7 +68,11 @@ export function ShopPage() {
 
   return (
     <>
-      <PageHero variant="light" title="Prodavnica" subtitle="Pregledajte asortiman robe široke potrošnje za STR prodavnice." />
+      <PageHero
+        variant="light"
+        title="Prodavnica"
+        subtitle="Pregledajte naš asortiman robe široke potrošnje za STR prodavnice. Pouzdana nabavka proizvoda za svakodnevno poslovanje na jednom mestu, uz kvalitet i kontinuiranu dostupnost."
+      />
 
       <div className="shop-layout">
         <aside className="shop-sidebar">
@@ -125,7 +128,7 @@ export function ShopPage() {
                       onChange={(e) => setFilter('brand', e.target.value)}
                     >
                       <option value="">Svi brendovi</option>
-                      {brands.map((b) => <option key={b} value={b}>{b}</option>)}
+                      {brands.map((b) => <option key={b.id} value={b.slug}>{b.name}</option>)}
                     </select>
                     <ChevronDown size={16} className="shop-filters__chevron" aria-hidden />
                   </div>
@@ -203,6 +206,72 @@ export function ShopPage() {
           </div>
         </div>
       </div>
+
+      <ShopFaq />
     </>
+  );
+}
+
+const SHOP_FAQS = [
+  {
+    q: 'Ko može da poručuje proizvode preko online shop-a?',
+    a: 'Kupovina je dostupna registrovanim pravnim licima i STR prodavnicama sa validnim PIB-om.'
+  },
+  {
+    q: 'Da li su sve cene javno dostupne?',
+    a: 'Ne. Deo proizvoda ima javno prikazane cene, dok su kompletne B2B cene i veleprodajni uslovi dostupni registrovanim korisnicima.'
+  },
+  {
+    q: 'Kako funkcioniše online poručivanje?',
+    a: 'Nakon registracije i odobrenja naloga možete pregledati katalog, dodati proizvode u korpu i poslati porudžbinu direktno preko Vertex platforme.'
+  },
+  {
+    q: 'Da li mogu da vidim istoriju svojih porudžbina?',
+    a: 'Da. Svaki registrovani korisnik ima pristup istoriji prethodnih porudžbina kroz svoj nalog.'
+  },
+  {
+    q: 'Kako se vrši plaćanje?',
+    a: 'Plaćanje se vrši preko računa, nakon potvrde porudžbine i dostavljenog predračuna.'
+  },
+  {
+    q: 'Koliko traje obrada porudžbine?',
+    a: 'Porudžbine se obrađuju nakon prijema zahteva, a informacije o isporuci i daljim koracima dobijate putem email-a.'
+  },
+  {
+    q: 'Da li vršite isporuku širom Srbije?',
+    a: 'Da. Vertex distribucija organizuje isporuku robe za poslovne kupce na teritoriji cele Srbije.'
+  },
+  {
+    q: 'Koje kategorije proizvoda su dostupne?',
+    a: 'U ponudi su hrana, piće, kafa, grickalice, slatkiši, ulja, hemija i druga roba široke potrošnje iz domaćeg i evropskog asortimana.'
+  },
+  {
+    q: 'Kako mogu da postanem B2B kupac?',
+    a: 'Potrebno je da registrujete firmu i pošaljete osnovne podatke radi verifikacije naloga.'
+  },
+  {
+    q: 'Šta ako željeni proizvod trenutno nije dostupan?',
+    a: 'Dostupnost proizvoda se redovno ažurira, a naš tim organizuje dopunu asortimana kroz planiranu distribuciju i nabavku.'
+  }
+];
+
+function ShopFaq() {
+  return (
+    <section className="vx-section vx-faq" style={{ marginTop: 48 }}>
+      <div className="vx-section__head">
+        <div>
+          <span className="vx-eyebrow">FAQ</span>
+          <h2>Najčešće postavljena pitanja</h2>
+        </div>
+      </div>
+      <div className="article-faq vx-faq__list">
+        {SHOP_FAQS.map((f) => (
+          <details key={f.q}>
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
   );
 }

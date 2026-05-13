@@ -37,6 +37,11 @@ export function ProductCard({ product, layout = 'grid' }) {
         </div>
       </div>
       <div className="card__body product-card__body">
+        {product.brand && (
+          <div className="product-card__brand" style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--color-muted)', marginBottom: 4 }}>
+            {product.brand}
+          </div>
+        )}
         <Link to={`/shop/${product.slug}`} style={{ color: 'inherit' }}>
           <h3 className="product-card__title" style={{ margin: '0 0 8px', fontSize: '1.05rem', letterSpacing: '-0.02em' }}>{product.name}</h3>
         </Link>

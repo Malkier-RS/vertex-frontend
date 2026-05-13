@@ -11,7 +11,7 @@ import { STOCK_STATUS_LABELS } from '../../lib/labels.js';
 const STOCK_OPTIONS = Object.entries(STOCK_STATUS_LABELS).map(([value, label]) => ({ value, label }));
 
 const empty = {
-  name: '', slug: '', description: '', shortDescription: '', sku: '', barcode: '', countryOfOrigin: '', brand: '',
+  name: '', slug: '', description: '', shortDescription: '', sku: '', barcode: '', countryOfOrigin: '', brandId: '',
   unitOfMeasure: 'kom', packageSize: '', imageUrl: '', price: 0, vatRate: 20, stockStatus: 'IN_STOCK',
   active: true, featured: false, publiclyVisiblePrice: false, categoryId: ''
 };
@@ -21,11 +21,13 @@ export function AdminProductEditorPage() {
   const isNew = !id;
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [form, setForm] = useState(empty);
   const [loading, setLoading] = useState(!isNew);
 
   useEffect(() => {
     api.get('/admin/categories').then((r) => setCategories(r.data));
+    api.get('/admin/brands').then((r) => setBrands(r.data));
   }, []);
 
   useEffect(() => {
@@ -40,7 +42,7 @@ export function AdminProductEditorPage() {
         sku: p.sku || '',
         barcode: p.barcode || '',
         countryOfOrigin: p.countryOfOrigin || '',
-        brand: p.brand || '',
+        brandId: p.brand?.id ?? '',
         unitOfMeasure: p.unitOfMeasure || 'kom',
         packageSize: p.packageSize || '',
         imageUrl: p.imageUrl || '',
@@ -67,7 +69,7 @@ export function AdminProductEditorPage() {
       sku: form.sku,
       barcode: form.barcode || null,
       countryOfOrigin: form.countryOfOrigin?.trim() || null,
-      brand: form.brand || null,
+      brand: form.brandId ? { id: Number(form.brandId) } : null,
       unitOfMeasure: form.unitOfMeasure,
       packageSize: form.packageSize || null,
       imageUrl: form.imageUrl || null,
@@ -107,7 +109,13 @@ export function AdminProductEditorPage() {
               <FormField label="Poreklo (npr. IT, DE)" hint="ISO kod zemlje, opciono.">
                 <input value={form.countryOfOrigin} onChange={(e) => set('countryOfOrigin', e.target.value)} maxLength={8} placeholder="IT" />
               </FormField>
-              <FormField label="Brend"><input value={form.brand} onChange={(e) => set('brand', e.target.value)} /></FormField>
+              <SelectField
+                label="Brend"
+                value={String(form.brandId)}
+                emptyLabel="— Bez brenda —"
+                options={brands.map((b) => ({ value: String(b.id), label: b.name }))}
+                onChange={(e) => set('brandId', e.target.value)}
+              />
               <SelectField
                 label="Kategorija"
                 required

@@ -1,105 +1,230 @@
 import { Link } from 'react-router-dom';
-import { ClipboardList, PackageSearch, Truck, Headphones } from 'lucide-react';
-import { PageHero } from '../components/ui/PageHero.jsx';
+import {
+  ArrowRight,
+  Boxes,
+  CheckCircle2,
+  ClipboardCheck,
+  ClipboardList,
+  Headphones,
+  MapPin,
+  PackageCheck,
+  PackageSearch,
+  Route,
+  Truck
+} from 'lucide-react';
 import { Card } from '../components/ui/Card.jsx';
-import { SectionHeader } from '../components/ui/SectionHeader.jsx';
+import { IMAGES } from '../lib/images.js';
 
-const logisticsGallery = [
+const STEPS = [
   {
-    src: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=900&h=600&fit=crop&q=80',
-    alt: 'Skladište sa policama i paletama'
+    icon: ClipboardCheck,
+    title: 'Prijem porudžbine',
+    desc: 'Vaša porudžbina ulazi u Vertex sistem i dobija jedinstveni broj za praćenje i obradu.'
   },
   {
-    src: 'https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?w=900&h=600&fit=crop&q=80',
-    alt: 'Vozilo za distribuciju robe'
+    icon: PackageSearch,
+    title: 'Provera i planiranje isporuke',
+    desc: 'Proveravamo dostupnost proizvoda i organizujemo najefikasniji plan isporuke.'
   },
   {
-    src: 'https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=900&h=600&fit=crop&q=80',
-    alt: 'Kontejneri i logistički lanac'
+    icon: Boxes,
+    title: 'Priprema i pakovanje robe',
+    desc: 'Roba se komisionira i pakuje prema vašoj porudžbini i potrebama prodajnog objekta.'
+  },
+  {
+    icon: Truck,
+    title: 'Isporuka na lokaciju',
+    desc: 'Organizovane distribucione rute omogućavaju brzu i pouzdanu dostavu do vašeg objekta.'
+  },
+  {
+    icon: Headphones,
+    title: 'Podrška nakon isporuke',
+    desc: 'Dostupni smo za dodatne narudžbine, pitanja i eventualne reklamacije.'
   }
 ];
 
-const steps = [
-  { title: 'Prijem porudžbine', desc: 'Porudžbina stiže u sistem i dobija jedinstveni broj.' },
-  { title: 'Provera dostupnosti', desc: 'Potvrđujemo zalihe i planiramo isporuku.' },
-  { title: 'Priprema robe', desc: 'Pakovanje i komisioniranje prema vašem zahtevu.' },
-  { title: 'Isporuka', desc: 'Planirane rute ka maloprodajnim objektima.' },
-  { title: 'Podrška nakon isporuke', desc: 'Tu smo za reklamacije i dodatne narudžbine.' }
+const FEATURES = [
+  {
+    icon: Route,
+    title: 'Planirana isporuka',
+    text: 'Organizovane rute prilagođene STR prodavnicama.'
+  },
+  {
+    icon: PackageCheck,
+    title: 'Širok B2B asortiman po veleprodajnim cenama',
+    text: 'Hrana, piće, kafa, grickalice, ulja, hemija i proizvodi široke potrošnje.'
+  },
+  {
+    icon: Headphones,
+    title: 'Podrška prodajnim objektima',
+    text: 'Pomoć u planiranju zaliha i priprema za sezonske periode povećane potražnje.'
+  },
+  {
+    icon: ClipboardList,
+    title: 'Online B2B poručivanje',
+    text: 'Jednostavno kreiranje i praćenje porudžbina kroz Vertex platformu.'
+  }
+];
+
+const COVERAGE = [
+  'Beograd i šira okolina',
+  'Vojvodina (Novi Sad, Subotica, Pančevo)',
+  'Centralna Srbija (Kragujevac, Čačak, Kraljevo)',
+  'Južna Srbija (Niš, Leskovac, Vranje)',
+  'Istok i zapad (Užice, Loznica, Zaječar)'
 ];
 
 export function DistributionPage() {
   return (
     <>
-      <PageHero variant="light" title="Distribucija i logistika" subtitle="Organizovana distribucija robe široke potrošnje za male i srednje prodajne objekte." />
+      <section className="vx-dist-hero">
+        <div className="vx-dist-hero__copy">
+          <span className="vx-eyebrow">Distribucija i logistika</span>
+          <h1>Distribucija i logistika za STR prodavnice</h1>
+          <p>
+            Vertex distribucija obezbeđuje organizovanu B2B isporuku robe široke potrošnje za STR
+            prodavnice, markete i pravna lica širom Srbije. Naš fokus je stabilna, planirana i
+            pouzdana veleprodajna distribucija hrane, pića i ostale robe iz kataloga.
+          </p>
+          <div className="row-flex" style={{ marginTop: 18 }}>
+            <Link to="/register" className="btn btn--primary btn--lg">Otvori B2B nalog</Link>
+            <Link to="/contact" className="btn btn--outline btn--lg">Pitajte za saradnju</Link>
+          </div>
+        </div>
+        <div className="vx-dist-hero__visual">
+          <img src={IMAGES.warehouseWorkers} alt="Vertex skladište i tim" />
+          <div className="vx-dist-hero__chip">
+            <Truck size={16} /> Aktivne rute danas
+          </div>
+        </div>
+      </section>
 
-      <section className="section">
-        <SectionHeader title="Proces od porudžbine do isporuke" />
-        <div className="timeline">
-          {steps.map((s, i) => (
-            <div key={s.title} className="timeline__item">
-              <div className="timeline__dot">{i + 1}</div>
-              <Card><div className="card__body"><h3 style={{ marginTop: 0 }}>{s.title}</h3><p className="text-muted" style={{ margin: 0 }}>{s.desc}</p></div></Card>
+      <section className="vx-section">
+        <div className="vx-section__head">
+          <div>
+            <span className="vx-eyebrow">Kako radimo</span>
+            <h2>Proces od porudžbine do isporuke</h2>
+          </div>
+        </div>
+        <div className="vx-process-grid">
+          {STEPS.map((s, i) => (
+            <div key={s.title} className="vx-process-card">
+              <div className="vx-process-card__num">{String(i + 1).padStart(2, '0')}</div>
+              <div className="vx-process-card__icon"><s.icon size={22} /></div>
+              <h3>{s.title}</h3>
+              <p>{s.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="section">
-        <div className="grid-2">
-          {[
-            { icon: Truck, t: 'Planirana isporuka', d: 'Rute prilagođene malim objektima i urbanoj distribuciji.' },
-            { icon: PackageSearch, t: 'Širok asortiman', d: 'Hrana, piće, higijena, hemija, pet program i još mnogo toga.' },
-            { icon: Headphones, t: 'Podrška prodavnicama', d: 'Konsultacije oko zaliha i sezonskih pikova.' },
-            { icon: ClipboardList, t: 'B2B poručivanje online', d: 'Jasan status porudžbine i istorija nabavke.' }
-          ].map((x) => (
-            <Card key={x.t} interactive>
-              <div className="card__body" style={{ display: 'flex', gap: 16 }}>
-                <x.icon size={28} color="#0d9488" />
-                <div>
-                  <h3 style={{ margin: '0 0 8px' }}>{x.t}</h3>
-                  <p className="text-muted" style={{ margin: 0 }}>{x.d}</p>
-                </div>
-              </div>
-            </Card>
+      <section className="vx-section">
+        <div className="vx-section__head">
+          <div>
+            <span className="vx-eyebrow">Šta dobijate</span>
+            <h2>Prednosti Vertex distribucije</h2>
+          </div>
+        </div>
+        <div className="vx-feature-grid">
+          {FEATURES.map((f) => (
+            <div key={f.title} className="vx-feature">
+              <div className="vx-feature__icon"><f.icon size={22} /></div>
+              <h3>{f.title}</h3>
+              <p>{f.text}</p>
+            </div>
           ))}
         </div>
       </section>
 
-      <section className="section">
+      <section className="vx-section">
         <div className="grid-2">
-          <Card><div className="card__body"><h3 style={{ marginTop: 0 }}>Zašto digitalno poručivanje?</h3><p className="text-muted">Manje grešaka, brži obrasci porudžbina i bolja vidljivost zaliha za vašu radnju.</p></div></Card>
-          <Card><div className="card__body"><h3 style={{ marginTop: 0 }}>Prednosti za STR prodavnice</h3><p className="text-muted">Fokus na brzinu, jasnoću cena nakon odobrenja i pouzdanu isporuku.</p></div></Card>
+          <Card>
+            <div className="card__body">
+              <span className="vx-eyebrow">Digitalno poručivanje</span>
+              <h3 style={{ marginTop: 8, marginBottom: 8 }}>Zašto digitalno poručivanje?</h3>
+              <p className="text-muted" style={{ margin: 0 }}>
+                Digitalni B2B sistem smanjuje greške u porudžbinama, ubrzava proces nabavke i
+                omogućava bolju kontrolu i pregled istorije kupovine.
+              </p>
+            </div>
+          </Card>
+          <Card>
+            <div className="card__body">
+              <span className="vx-eyebrow">Za STR prodavnice</span>
+              <h3 style={{ marginTop: 8, marginBottom: 8 }}>Prednosti za STR prodavnice</h3>
+              <p className="text-muted" style={{ margin: 0 }}>
+                Vertex sistem je prilagođen malim i srednjim prodajnim objektima koji žele brzu
+                nabavku, jasne veleprodajne uslove i pouzdanu distribuciju robe.
+              </p>
+            </div>
+          </Card>
         </div>
       </section>
 
-      <section className="section">
-        <SectionHeader title="Logistika u slikama" subtitle="Ilustrativne fotografije — u produkciji zamenite sopstvenim materijalom." />
-        <div className="grid-3">
-          {logisticsGallery.map((item) => (
-            <Card key={item.src}>
-              <div className="card__media" style={{ aspectRatio: '4/3' }}>
-                <img
-                  src={item.src}
-                  alt={item.alt}
-                  width={900}
-                  height={600}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-            </Card>
-          ))}
+      <section className="vx-section vx-coverage">
+        <div className="vx-coverage__copy">
+          <span className="vx-eyebrow">Pokrivenost</span>
+          <h2>Beograd kao centar, Srbija kao mreža</h2>
+          <p>
+            Naša centrala se nalazi u Beogradu (Pančevački put 86D), a planirane rute pokrivaju
+            ključne regione. Manje prodavnice van velikih gradova dobijaju isti pristup asortimanu
+            kao i radnje u centru grada.
+          </p>
+          <ul className="vx-checks">
+            {COVERAGE.map((c) => (
+              <li key={c}><CheckCircle2 size={18} /> {c}</li>
+            ))}
+          </ul>
+          <Link to="/contact" className="btn btn--secondary" style={{ marginTop: 8 }}>
+            Proveri uslove za vaš grad <ArrowRight size={16} />
+          </Link>
+        </div>
+        <div className="vx-coverage__visual">
+          <img src={IMAGES.deliveryOldTown} alt="Vertex isporuka u urbanoj sredini" />
+          <div className="vx-coverage__pin">
+            <MapPin size={18} /> Beograd · Vojvodina · Cela Srbija
+          </div>
         </div>
       </section>
 
-      <div className="page-hero" style={{ marginTop: 8 }}>
-        <h2 style={{ fontSize: '1.35rem', margin: '0 0 8px' }}>Otvorite B2B nalog i poručujte robu online</h2>
-        <p style={{ margin: 0, opacity: 0.95 }}>Registracija je prvi korak ka veleprodajnim cenama i digitalnoj nabavci.</p>
-        <div className="page-hero__actions">
-          <Link to="/register" className="btn btn--primary btn--lg">Registracija</Link>
-          <Link to="/contact" className="btn btn--outline btn--lg">Kontakt</Link>
+      <section className="vx-section">
+        <div className="vx-section__head">
+          <div>
+            <span className="vx-eyebrow">Iz prakse</span>
+            <h2>Logistika u slikama</h2>
+          </div>
         </div>
-      </div>
+        <div className="vx-gallery">
+          <div className="vx-gallery__item vx-gallery__item--lg">
+            <img src={IMAGES.wholesaleOverview} alt="Magacin sa paletama i radnicima" loading="lazy" />
+          </div>
+          <div className="vx-gallery__item">
+            <img src={IMAGES.warehousePringles} alt="Skladišne police sa proizvodima" loading="lazy" />
+          </div>
+          <div className="vx-gallery__item">
+            <img src={IMAGES.vertexVanPurple} alt="Vertex distributivna vozila" loading="lazy" />
+          </div>
+          <div className="vx-gallery__item">
+            <img src={IMAGES.warehouseAisle} alt="Komisiona izrada porudžbine" loading="lazy" />
+          </div>
+        </div>
+      </section>
+
+      <section className="vx-final-cta">
+        <div className="vx-final-cta__inner">
+          <div>
+            <h2>Spremni za stabilno snabdevanje?</h2>
+            <p>
+              Registrujte firmu i preuzmite kontrolu nad nabavkom. Vertex tim vam pomaže da
+              postavite proces koji štedi vreme i smanjuje rizik od nestašica na rafovima.
+            </p>
+          </div>
+          <div className="vx-final-cta__actions">
+            <Link to="/register" className="btn btn--primary btn--lg">Registracija</Link>
+            <Link to="/contact" className="btn btn--outline btn--lg">Kontakt</Link>
+          </div>
+        </div>
+      </section>
     </>
   );
 }

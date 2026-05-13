@@ -6,12 +6,12 @@ export function PriceVisibilityNotice({ user }) {
     <div className="sidebar-card">
       <h3>Vidljivost cena</h3>
       <p className="text-muted" style={{ fontSize: '0.9rem', margin: '0 0 12px' }}>
-        Javno su prikazane cene samo za odabrane proizvode. Kompletan asortiman i B2B cene dostupni su nakon ručnog odobrenja naloga.
+        Javno su prikazane cene za odabrane proizvode. Kompletan asortiman i B2B cenovnik dostupni su nakon ručnog odobrenja korisničkog naloga.
       </p>
       {!user && (
-        <div className="row-flex">
+        <div className="row-flex" style={{ alignItems: 'flex-start' }}>
           <Badge tone="locked"><Lock size={12} /> B2B cene</Badge>
-          <span className="text-muted" style={{ fontSize: '0.85rem' }}>Prijavite se nakon odobrenja.</span>
+          <span className="text-muted" style={{ fontSize: '0.85rem' }}>Prijavite se i pristupite B2B cenama nakon odobrenja naloga. Pristup je namenjen registrovanim poslovnim korisnicima.</span>
         </div>
       )}
       {user?.status === 'PENDING' && (

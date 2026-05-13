@@ -42,6 +42,7 @@ export function AdminProductsPage() {
             <th />
             <th>Naziv</th>
             <th>SKU</th>
+            <th>Brend</th>
             <th>Kategorija</th>
             <th>Cena</th>
             <th>Javna cena</th>
@@ -56,6 +57,7 @@ export function AdminProductsPage() {
               <td><img className="thumb" src={productImageUrl(p)} alt="" /></td>
               <td><strong>{p.name}</strong></td>
               <td>{p.sku}</td>
+              <td>{p.brand?.name || <span className="text-muted">—</span>}</td>
               <td>{p.category?.name}</td>
               <td>{formatRsd(p.price)}</td>
               <td>{p.publiclyVisiblePrice ? <Badge tone="success">Da</Badge> : <Badge tone="neutral">Ne</Badge>}</td>

@@ -27,6 +27,7 @@ import { AdminDashboardPage } from './pages/admin/AdminDashboardPage.jsx';
 import { AdminProductsPage } from './pages/admin/AdminProductsPage.jsx';
 import { AdminProductEditorPage } from './pages/admin/AdminProductEditorPage.jsx';
 import { AdminCategoriesPage } from './pages/admin/AdminCategoriesPage.jsx';
+import { AdminBrandsPage } from './pages/admin/AdminBrandsPage.jsx';
 import { AdminCustomersPage } from './pages/admin/AdminCustomersPage.jsx';
 import { AdminCustomerDetailPage } from './pages/admin/AdminCustomerDetailPage.jsx';
 import { AdminOrdersPage } from './pages/admin/AdminOrdersPage.jsx';
@@ -69,6 +70,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Route path="products/new" element={<AdminProductEditorPage key="product-new" />} />
               <Route path="products/:id/edit" element={<AdminProductEditorPage key="product-edit" />} />
               <Route path="categories" element={<AdminCategoriesPage />} />
+              <Route path="brands" element={<AdminBrandsPage />} />
               <Route path="customers" element={<AdminCustomersPage />} />
               <Route path="customers/:id" element={<AdminCustomerDetailPage />} />
               <Route path="orders" element={<AdminOrdersPage />} />
