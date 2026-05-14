@@ -83,7 +83,9 @@ export function AdminCustomerDetailPage() {
       await refreshDetail();
       setFeedback({ type: 'ok', text: `${label}: izmene su sačuvane.` });
     } catch (e) {
-      setFeedback({ type: 'err', text: e?.response?.data?.message || 'Akcija nije uspela.' });
+      const d = e?.response?.data;
+      const msg = (typeof d?.message === 'string' && d.message) || (typeof d?.detail === 'string' && d.detail) || 'Akcija nije uspela.';
+      setFeedback({ type: 'err', text: msg });
     } finally {
       setActionLoading(false);
     }
@@ -168,8 +170,8 @@ export function AdminCustomerDetailPage() {
       </div>
 
       <div className="row-flex" style={{ marginTop: 20, flexWrap: 'wrap' }}>
-        <Button type="button" variant="primary" disabled={actionLoading} onClick={() => approve()}>Odobri</Button>
-        <Button type="button" variant="outline" disabled={actionLoading} onClick={() => reject()}>Odbij</Button>
+        <Button type="button" variant="primary" disabled={actionLoading || data.status !== 'PENDING'} onClick={() => approve()}>Odobri</Button>
+        <Button type="button" variant="outline" disabled={actionLoading || data.status !== 'PENDING'} onClick={() => reject()}>Odbij</Button>
         <Button type="button" variant="outline" disabled={actionLoading} onClick={() => block()}>Blokiraj</Button>
         <Button type="button" variant="ghost" disabled={actionLoading} onClick={() => unblock()}>Odblokiraj</Button>
       </div>

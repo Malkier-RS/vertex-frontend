@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ChevronRight, Lock, Minus, Package, Plus, ShoppingCart } from 'lucide-react';
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -15,11 +15,13 @@ import { stockStatusLabel } from '../lib/labels.js';
 
 export function ProductDetailPage() {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth();
-  const { add, items } = useCart();
+  const { addWithQuantity, items } = useCart();
   const [product, setProduct] = useState(null);
   const [related, setRelated] = useState([]);
   const [qty, setQty] = useState(1);
+  const [cartPrompt, setCartPrompt] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -39,6 +41,11 @@ export function ProductDetailPage() {
     });
   }, [product]);
 
+  useEffect(() => {
+    setCartPrompt(false);
+    setQty(1);
+  }, [slug]);
+
   if (!product) return <LoadingState />;
 
   const img = productImageUrl(product);
@@ -46,7 +53,14 @@ export function ProductDetailPage() {
   const lineQty = items.find((i) => i.id === product.id)?.quantity;
 
   const addWithQty = () => {
-    for (let i = 0; i < qty; i++) add(product);
+    addWithQuantity(product, qty);
+    setCartPrompt(true);
+  };
+
+  const continueShopping = () => {
+    setCartPrompt(false);
+    if (window.history.length > 1) navigate(-1);
+    else navigate('/shop');
   };
 
   return (
@@ -102,14 +116,25 @@ export function ProductDetailPage() {
           )}
 
           {canOrder && (
-            <div className="row-flex" style={{ marginBottom: 16 }}>
-              <div className="row-flex" style={{ border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: 4 }}>
-                <button type="button" className="icon-btn icon-btn--ghost" onClick={() => setQty((q) => Math.max(1, q - 1))}><Minus size={16} /></button>
-                <span style={{ minWidth: 32, textAlign: 'center', fontWeight: 700 }}>{qty}</span>
-                <button type="button" className="icon-btn icon-btn--ghost" onClick={() => setQty((q) => q + 1)}><Plus size={16} /></button>
+            <>
+              <div className="row-flex" style={{ marginBottom: 16 }}>
+                <div className="row-flex" style={{ border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: 4 }}>
+                  <button type="button" className="icon-btn icon-btn--ghost" onClick={() => setQty((q) => Math.max(1, q - 1))}><Minus size={16} /></button>
+                  <span style={{ minWidth: 32, textAlign: 'center', fontWeight: 700 }}>{qty}</span>
+                  <button type="button" className="icon-btn icon-btn--ghost" onClick={() => setQty((q) => q + 1)}><Plus size={16} /></button>
+                </div>
+                <Button type="button" variant="primary" onClick={addWithQty}><ShoppingCart size={18} /> Dodaj u korpu</Button>
               </div>
-              <Button type="button" variant="primary" onClick={addWithQty}><ShoppingCart size={18} /> Dodaj u korpu</Button>
-            </div>
+              {cartPrompt && (
+                <div className="cart-add-banner">
+                  <p>Proizvod je dodat u korpu.</p>
+                  <div className="row-flex" style={{ flexWrap: 'wrap' }}>
+                    <Link to="/korpa" className="btn btn--primary btn--sm">Završi kupovinu</Link>
+                    <Button type="button" variant="outline" size="sm" onClick={continueShopping}>Nastavi kupovinu</Button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
           {user?.status === 'APPROVED' && lineQty && (

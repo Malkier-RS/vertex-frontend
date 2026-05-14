@@ -11,6 +11,7 @@ export function AdminCategoriesPage() {
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(null);
   const load = () => api.get('/admin/categories').then((r) => setItems(r.data));
 
   useEffect(() => { load().finally(() => setLoading(false)); }, []);
@@ -30,11 +31,47 @@ export function AdminCategoriesPage() {
               <td>{c.name}</td>
               <td>{c.slug}</td>
               <td>{c.active ? <Badge tone="success">Da</Badge> : <Badge tone="danger">Ne</Badge>}</td>
-              <td><button type="button" className="btn btn--ghost btn--sm" onClick={() => api.delete(`/admin/categories/${c.id}`).then(load)}>Obriši</button></td>
+              <td>
+                <div className="row-flex" style={{ gap: 8, flexWrap: 'wrap' }}>
+                  <button type="button" className="btn btn--ghost btn--sm" onClick={() => setEditing({ id: c.id, name: c.name, slug: c.slug, active: c.active })}>Izmeni</button>
+                  <button type="button" className="btn btn--ghost btn--sm" onClick={() => api.delete(`/admin/categories/${c.id}`).then(load)}>Obriši</button>
+                </div>
+              </td>
             </tr>
           ))}
         </tbody>
       </AdminTable>
+
+      {editing && (
+        <>
+          <h2 style={{ marginTop: 32 }}>Izmena kategorije</h2>
+          <form
+            className="form-grid"
+            style={{ maxWidth: 520, marginTop: 12 }}
+            onSubmit={async (e) => {
+              e.preventDefault();
+              await api.put(`/admin/categories/${editing.id}`, {
+                name: editing.name,
+                slug: editing.slug,
+                active: editing.active
+              });
+              setEditing(null);
+              load();
+            }}
+          >
+            <FormField label="Naziv"><input required value={editing.name} onChange={(e) => setEditing((x) => ({ ...x, name: e.target.value }))} /></FormField>
+            <FormField label="Slug"><input required value={editing.slug} onChange={(e) => setEditing((x) => ({ ...x, slug: e.target.value }))} /></FormField>
+            <label className="form-switch" style={{ gridColumn: '1 / -1' }}>
+              <input type="checkbox" checked={editing.active} onChange={(e) => setEditing((x) => ({ ...x, active: e.target.checked }))} />
+              Aktivna u katalogu
+            </label>
+            <div className="row-flex" style={{ gridColumn: '1 / -1', gap: 8 }}>
+              <Button type="submit" variant="primary">Sačuvaj</Button>
+              <Button type="button" variant="outline" onClick={() => setEditing(null)}>Otkaži</Button>
+            </div>
+          </form>
+        </>
+      )}
 
       <h2 style={{ marginTop: 32 }}>Nova kategorija</h2>
       <form

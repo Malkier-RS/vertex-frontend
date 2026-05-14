@@ -1,7 +1,14 @@
 import axios from 'axios';
 
+function apiOrigin() {
+  const v = import.meta.env.VITE_API_BASE_URL;
+  const s = v == null ? '' : String(v).trim();
+  if (!s || s === 'undefined') return 'http://localhost:8080';
+  return s.replace(/\/$/, '');
+}
+
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_API_BASE_URL}/api`,
+  baseURL: `${apiOrigin()}/api`,
 });
 
 api.interceptors.request.use((config) => {

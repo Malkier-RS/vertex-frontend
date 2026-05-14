@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Lock, Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -20,6 +20,12 @@ export function CartPage() {
   const [note, setNote] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  const rows = useMemo(() => items.map((i) => ({
+    ...i,
+    unit: Number(i.price) || 0,
+    line: (Number(i.price) || 0) * i.quantity
+  })), [items]);
 
   const checkout = async () => {
     setError('');
@@ -56,24 +62,49 @@ export function CartPage() {
         <EmptyState title="Korpa je prazna" description="Dodajte proizvode iz prodavnice." action={<Link to="/shop" className="btn btn--primary">Prodavnica</Link>} />
       ) : (
         <div className="grid-2" style={{ alignItems: 'start' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {items.map((i) => (
-              <Card key={i.id}>
-                <div className="card__body row-flex" style={{ alignItems: 'center', gap: 16 }}>
-                  <img src={productImageUrl(i)} alt="" style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 'var(--radius-sm)' }} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <strong>{i.name}</strong>
-                    <div className="text-muted" style={{ fontSize: '0.85rem' }}>{formatRsd(i.price)} · PDV {i.vatRate}%</div>
-                  </div>
-                  <div className="row-flex">
-                    <button type="button" className="icon-btn icon-btn--ghost" onClick={() => update(i.id, i.quantity - 1)} aria-label="Smanji"><Minus size={16} /></button>
-                    <span style={{ minWidth: 28, textAlign: 'center', fontWeight: 700 }}>{i.quantity}</span>
-                    <button type="button" className="icon-btn icon-btn--ghost" onClick={() => update(i.id, i.quantity + 1)} aria-label="Povećaj"><Plus size={16} /></button>
-                  </div>
-                  <button type="button" className="icon-btn" onClick={() => remove(i.id)} aria-label="Ukloni"><Trash2 size={18} /></button>
-                </div>
-              </Card>
-            ))}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div className="table-wrap cart-lines-wrap">
+              <table className="cart-lines">
+                <thead>
+                  <tr>
+                    <th className="cart-lines__thumb" scope="col"> </th>
+                    <th scope="col">Proizvod</th>
+                    <th scope="col" className="cart-lines__num">Jed. cena</th>
+                    <th scope="col" className="cart-lines__num">Količina</th>
+                    <th scope="col" className="cart-lines__num">Ukupno</th>
+                    <th className="cart-lines__actions" scope="col"> </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((i) => (
+                    <tr key={i.id}>
+                      <td className="cart-lines__thumb">
+                        <img src={productImageUrl(i)} alt="" />
+                      </td>
+                      <td>
+                        <div className="cart-lines__title">{i.name}</div>
+                        <div className="text-muted" style={{ fontSize: '0.8rem' }}>PDV {i.vatRate}% uračunat u cenu</div>
+                      </td>
+                      <td className="cart-lines__num">{formatRsd(i.unit)}</td>
+                      <td className="cart-lines__num">
+                        <div className="row-flex" style={{ justifyContent: 'center', gap: 4 }}>
+                          <button type="button" className="icon-btn icon-btn--ghost" onClick={() => update(i.id, i.quantity - 1)} aria-label="Smanji"><Minus size={16} /></button>
+                          <span style={{ minWidth: 28, textAlign: 'center', fontWeight: 700 }}>{i.quantity}</span>
+                          <button type="button" className="icon-btn icon-btn--ghost" onClick={() => update(i.id, i.quantity + 1)} aria-label="Povećaj"><Plus size={16} /></button>
+                        </div>
+                      </td>
+                      <td className="cart-lines__num"><strong>{formatRsd(i.line)}</strong></td>
+                      <td className="cart-lines__actions">
+                        <button type="button" className="icon-btn" onClick={() => remove(i.id)} aria-label="Ukloni"><Trash2 size={18} /></button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-muted" style={{ fontSize: '0.85rem', margin: 0 }}>
+              Prikazane cene uključuju PDV. Poseban prikaz rabata ili dodatnog obračuna PDV možemo uskladiti sa vašim B2B procesom po dogovoru.
+            </p>
           </div>
 
           <Card>

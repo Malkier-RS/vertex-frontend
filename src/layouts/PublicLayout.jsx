@@ -19,51 +19,62 @@ export default function PublicLayout() {
   const { user, logout } = useAuth();
   const { items } = useCart();
   const [open, setOpen] = useState(false);
+  const close = () => setOpen(false);
 
   return (
     <div className="app-root">
-      <header className="site-header">
+      <header className={`site-header${open ? ' site-header--nav-open' : ''}`.trim()}>
         <div className="container site-header__inner">
-          <Link to="/" className="site-logo" onClick={() => setOpen(false)}>
+          <Link to="/" className="site-logo" onClick={close}>
             <img src={vertexLogo} alt="Vertex logo" className="site-logo__image" />
             Vertex B2B
           </Link>
 
-          <button type="button" className="icon-btn menu-toggle" aria-label="Meni" onClick={() => setOpen((v) => !v)}>
+          <button
+            type="button"
+            className="icon-btn menu-toggle"
+            aria-label={open ? 'Zatvori meni' : 'Otvori meni'}
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+          >
             {open ? <X size={22} /> : <Menu size={22} />}
           </button>
 
-          <nav className={`site-nav ${open ? 'site-nav--open' : ''}`.trim()}>
-            {nav.map((n) => (
-              <NavLink key={n.to} to={n.to} end={n.end} onClick={() => setOpen(false)} className={({ isActive }) => (isActive ? 'active' : undefined)}>
-                {n.label}
-              </NavLink>
-            ))}
-          </nav>
+          <button type="button" className="site-header__backdrop" aria-label="Zatvori meni" onClick={close} />
 
-          <div className="site-actions">
-            <Link to="/korpa" className="icon-btn icon-btn--cart" aria-label="Korpa" onClick={() => setOpen(false)}>
-              <ShoppingCart size={20} />
-              {items.length > 0 && <span className="icon-btn__badge">{items.length}</span>}
-            </Link>
-            {!user ? (
-              <>
-                <Link to="/login" className="btn btn--outline btn--sm">Prijava</Link>
-                <Link to="/register" className="btn btn--primary btn--sm">Registracija</Link>
-              </>
-            ) : (
-              <>
-                <Link to="/account" className="icon-btn" title="Nalog" onClick={() => setOpen(false)}>
-                  <UserRound size={20} />
-                </Link>
-                {user.role === 'ADMIN' && (
-                  <Link to="/admin" className="btn btn--secondary btn--sm" onClick={() => setOpen(false)}>Admin</Link>
-                )}
-                <button type="button" className="icon-btn" onClick={logout} title="Odjava">
-                  <LogOut size={20} />
-                </button>
-              </>
-            )}
+          <div className={`site-header__drawer${open ? ' site-header__drawer--open' : ''}`.trim()}>
+            <nav className="site-nav">
+              {nav.map((n) => (
+                <NavLink key={n.to} to={n.to} end={n.end} onClick={close} className={({ isActive }) => (isActive ? 'active' : undefined)}>
+                  {n.label}
+                </NavLink>
+              ))}
+            </nav>
+
+            <div className="site-actions">
+              <Link to="/korpa" className="icon-btn icon-btn--cart" aria-label="Korpa" onClick={close}>
+                <ShoppingCart size={20} />
+                {items.length > 0 && <span className="icon-btn__badge">{items.length}</span>}
+              </Link>
+              {!user ? (
+                <>
+                  <Link to="/login" className="btn btn--outline btn--sm" onClick={close}>Prijava</Link>
+                  <Link to="/register" className="btn btn--primary btn--sm" onClick={close}>Registracija</Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/account" className="icon-btn" title="Nalog" onClick={close}>
+                    <UserRound size={20} />
+                  </Link>
+                  {user.role === 'ADMIN' && (
+                    <Link to="/admin" className="btn btn--secondary btn--sm" onClick={close}>Admin</Link>
+                  )}
+                  <button type="button" className="icon-btn" onClick={() => { logout(); close(); }} title="Odjava">
+                    <LogOut size={20} />
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -78,4 +89,3 @@ export default function PublicLayout() {
     </div>
   );
 }
-
